@@ -1,0 +1,3 @@
+#!/bin/sh
+
+./logbus start -t t --configfile /ta/logbus/conf/daemon.json

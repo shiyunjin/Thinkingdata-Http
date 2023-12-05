@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Assign environment variables to local variables
+APP_ID=${APP_ID}
+PUSH_URL=${PUSH_URL}
+
+# Create the configuration file
+cat <<EOF > /ta/logbus/conf/daemon.json
+{
+  "datasource": [
+    {
+      "type": "file",
+      "app_id": "${APP_ID}",
+      "file_patterns": ["./data/*"],
+      "unit_remove": "day",
+      "offset_remove": 7,
+      "remove_dirs": true,
+      "http_compress": "gzip"
+    }
+  ],
+  "push_url": "${PUSH_URL}"
+}
+EOF
