@@ -12,8 +12,8 @@ cat <<EOF > /ta/logbus/conf/daemon.json
       "type": "file",
       "app_id": "${APP_ID}",
       "file_patterns": ["./data/*"],
-      "unit_remove": "day",
-      "offset_remove": 7,
+      "unit_remove": "hour",
+      "offset_remove": 12,
       "remove_dirs": true,
       "http_compress": "gzip"
     }
