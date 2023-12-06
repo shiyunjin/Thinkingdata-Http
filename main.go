@@ -13,7 +13,7 @@ import (
 )
 
 type BaseData struct {
-	AccountId  string `json:"#account_id,omitempty"`
+	AccountId  string `json:"pid,omitempty"`
 	DistinctId string `json:"#distinct_id,omitempty"`
 }
 
