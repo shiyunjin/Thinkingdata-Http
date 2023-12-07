@@ -9,12 +9,13 @@ import (
 	"strings"
 
 	"github.com/ThinkingDataAnalytics/go-sdk/v2/src/thinkingdata"
+	"github.com/spf13/cast"
 	"pkg.moe/pkg/logger"
 )
 
 type BaseData struct {
-	AccountId  string `json:"pid,omitempty"`
-	DistinctId string `json:"#distinct_id,omitempty"`
+	AccountId  interface{} `json:"pid,omitempty"`
+	DistinctId string      `json:"#distinct_id,omitempty"`
 }
 
 func main() {
@@ -52,7 +53,7 @@ func main() {
 		cleanPath := path.Clean(r.URL.Path)
 		trimmedPath := strings.TrimPrefix(cleanPath, "/")
 
-		if err := te.Track(baseData.AccountId, baseData.DistinctId, trimmedPath, data); err != nil {
+		if err := te.Track(cast.ToString(baseData.AccountId), baseData.DistinctId, trimmedPath, data); err != nil {
 			logger.Get().Error("te.Track: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
