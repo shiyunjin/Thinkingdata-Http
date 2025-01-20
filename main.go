@@ -29,6 +29,9 @@ func main() {
 
 	server := http.Server{Addr: ":4477"}
 	server.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cleanPath := path.Clean(r.URL.Path)
+		trimmedPath := strings.TrimPrefix(cleanPath, "/")
+
 		payload, err := io.ReadAll(r.Body)
 		if err != nil {
 			logger.Get().Error("io.ReadAll: %v", err)
@@ -50,13 +53,41 @@ func main() {
 			return
 		}
 
-		cleanPath := path.Clean(r.URL.Path)
-		trimmedPath := strings.TrimPrefix(cleanPath, "/")
+		switch trimmedPath {
+		case "UserSet":
+			if err := te.UserSet(cast.ToString(baseData.AccountId), baseData.DistinctId, data); err != nil {
+				logger.Get().Error("te.UserSet: %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 
-		if err := te.Track(cast.ToString(baseData.AccountId), baseData.DistinctId, trimmedPath, data); err != nil {
-			logger.Get().Error("te.Track: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
+		case "UserSetOnce":
+			if err := te.UserSetOnce(cast.ToString(baseData.AccountId), baseData.DistinctId, data); err != nil {
+				logger.Get().Error("te.UserSetOnce: %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+		case "UserAdd":
+			if err := te.UserAdd(cast.ToString(baseData.AccountId), baseData.DistinctId, data); err != nil {
+				logger.Get().Error("te.UserAdd: %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+		case "UserDelete":
+			if err := te.UserDelete(cast.ToString(baseData.AccountId), baseData.DistinctId); err != nil {
+				logger.Get().Error("te.UserDelete: %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+		default:
+			if err := te.Track(cast.ToString(baseData.AccountId), baseData.DistinctId, trimmedPath, data); err != nil {
+				logger.Get().Error("te.Track: %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 		}
 	})
 
